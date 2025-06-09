@@ -1,48 +1,144 @@
-﻿import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Globe, Telescope } from "lucide-react";
+# ترکیب صفحه اصلی و صفحه مزایا در یک فایل index.html با منوی دکمه‌ای
+combined_index_html = """<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>رصدخانه آنلاین / Online Telescope</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: linear-gradient(to bottom, #111, #000);
+      color: #eee;
+      padding: 2rem;
+    }
+    h1 { text-align: center; color: #00e0ff; }
+    em { color: #8df; display: block; margin-top: 1rem; text-align: center; }
+    .switch, .nav { text-align: center; margin-bottom: 2rem; }
+    button {
+      background: #444; color: white; border: none;
+      padding: 0.5rem 1rem; margin: 0 0.5rem; cursor: pointer;
+      border-radius: 5px;
+    }
+    .section { max-width: 800px; margin: auto; line-height: 1.7; }
+    h2 { color: #0cf; border-bottom: 1px solid #444; padding-bottom: 0.3rem; margin-top: 2rem; }
+    ul { list-style: square; padding-left: 1.5rem; }
+  </style>
+</head>
+<body>
+  <div class="switch">
+    <button onclick="setLang('fa')">فارسی</button>
+    <button onclick="setLang('en')">English</button>
+  </div>
 
-export default function OnlineTelescope() {
-  const [lang, setLang] = useState("fa");
+  <div class="section">
+    <h1 id="title"></h1>
+    <p id="desc"></p>
+    <em id="sub"></em>
 
-  const content = {
-    fa: {
-      title: "رصدخانه‌های آنلاین: دروازه‌ای نوین به آسمان",
-      description:
-        "با رصدخانه‌های آنلاین، دیگر محدود به موقعیت جغرافیایی، شرایط جوی یا هزینه‌های بالای سفر نیستید. از هر نقطه‌ای از جهان، تنها با اتصال به اینترنت، می‌توانید اعماق کیهان را کاوش کنید، در تحقیقات علمی مشارکت داشته باشید و آموزش‌های نجومی حرفه‌ای دریافت کنید.",
-      subtitle: "رصدخانه آنلاین، علم نجوم را دموکراتیک کرده است — برای همه، در هر زمان، در هر مکان.",
-    },
-    en: {
-      title: "Online Robotic Telescopes: A New Gateway to the Stars",
-      description:
-        "With online telescopes, you're no longer bound by geography, weather, or costly travel. From anywhere on Earth, you can explore the depths of the cosmos, contribute to scientific discoveries, and engage in professional-grade astronomy education — all via the internet.",
-      subtitle: "Online observatories are democratizing astronomy — for everyone, anytime, anywhere.",
-    },
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-black text-white p-6">
-      <div className="max-w-3xl mx-auto text-center">
-        <div className="flex justify-center mb-6 space-x-4 rtl:space-x-reverse">
-          <Button onClick={() => setLang("fa")} variant={lang === "fa" ? "default" : "outline"}>فارسی</Button>
-          <Button onClick={() => setLang("en")} variant={lang === "en" ? "default" : "outline"}>English</Button>
-        </div>
-        <Card className="bg-slate-800 border border-slate-700 rounded-2xl shadow-xl">
-          <CardContent className="p-8 space-y-4">
-            <div className="flex justify-center text-6xl text-cyan-400">
-              <Telescope size={48} />
-            </div>
-            <h1 className="text-2xl font-bold">{content[lang].title}</h1>
-            <p className="text-base leading-relaxed text-slate-300">{content[lang].description}</p>
-            <p className="text-sm italic text-cyan-300">{content[lang].subtitle}</p>
-          </CardContent>
-        </Card>
-        <div className="mt-10 text-slate-400 text-sm flex justify-center items-center space-x-2 rtl:space-x-reverse">
-          <Globe size={16} />
-          <span>pourya rashidi | GitHub Pages</span>
-        </div>
-      </div>
+    <div class="nav">
+      <button onclick="toggleBenefits()">
+        👁 نمایش / پنهان کردن مزایا و کاربردها
+      </button>
     </div>
-  );
-}
+
+    <div id="benefits" style="display:none;">
+      <h2>🔹 مزایا / Benefits</h2>
+      <ul id="benefits-list"></ul>
+
+      <h2>🔹 کاربردها / Applications</h2>
+      <ul id="apps-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    const content = {
+      fa: {
+        title: 'رصدخانه‌های آنلاین: دروازه‌ای نوین به آسمان',
+        desc: 'با رصدخانه‌های آنلاین، دیگر محدود به موقعیت جغرافیایی، شرایط جوی یا هزینه‌های بالای سفر نیستید. از هر نقطه‌ای از جهان، تنها با اتصال به اینترنت، می‌توانید اعماق کیهان را کاوش کنید.',
+        sub: 'رصدخانه آنلاین، علم نجوم را دموکراتیک کرده است — برای همه، در هر زمان، در هر مکان.',
+        benefits: [
+          'دسترسی جهانی: امکان رصد برای همه از هر نقطه‌ای از جهان',
+          'صرفه‌جویی اقتصادی: بدون نیاز به خرید تجهیزات گران',
+          'مشارکت علمی: امکان مشارکت در پروژه‌های حرفه‌ای',
+          'انعطاف زمانی: رزرو رصد در هر ساعت',
+          'تصاویر با کیفیت بالا از تلسکوپ‌های حرفه‌ای'
+        ],
+        apps: [
+          'آموزش در مدارس و دانشگاه‌ها',
+          'پژوهش‌های علمی و داده‌برداری',
+          'علم شهروندی و مشارکت عمومی',
+          'پخش زنده رویدادهای نجومی',
+          'الهام‌بخشی برای نسل جدید'
+        ]
+      },
+      en: {
+        title: 'Online Robotic Telescopes: A New Gateway to the Stars',
+        desc: \"With online telescopes, you're no longer bound by geography, weather, or costly travel. Explore the cosmos from anywhere on Earth.\",
+        sub: 'Online observatories are democratizing astronomy — for everyone, anytime, anywhere.',
+        benefits: [
+          'Global access from anywhere on Earth',
+          'Cost savings: no need for personal telescopes',
+          'Scientific participation in real projects',
+          'Flexible scheduling at any hour',
+          'High-quality images from pro telescopes'
+        ],
+        apps: [
+          'Education in schools and universities',
+          'Remote research and data collection',
+          'Citizen science and community projects',
+          'Live streaming of cosmic events',
+          'Inspiring the next generation of scientists'
+        ]
+      }
+    };
+
+    function setLang(lang) {
+      document.getElementById('title').textContent = content[lang].title;
+      document.getElementById('desc').textContent = content[lang].desc;
+      document.getElementById('sub').textContent = content[lang].sub;
+
+      const benefitsList = document.getElementById('benefits-list');
+      const appsList = document.getElementById('apps-list');
+      benefitsList.innerHTML = '';
+      appsList.innerHTML = '';
+
+      content[lang].benefits.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        benefitsList.appendChild(li);
+      });
+
+      content[lang].apps.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        appsList.appendChild(li);
+      });
+    }
+
+    function toggleBenefits() {
+      const section = document.getElementById('benefits');
+      section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    }
+
+    setLang('fa');
+  </script>
+</body>
+</html>
+"""
+
+# بازنویسی فایل index.html با نسخه جدید
+with open("/mnt/data/telescope-github-upload/index.html", "w", encoding="utf-8") as f:
+    f.write(combined_index_html)
+
+# بازسازی فایل ZIP با index جدید
+zip_path = "/mnt/data/telescope-github-upload.zip"
+with zipfile.ZipFile(zip_path, 'w') as zipf:
+    for foldername, subfolders, filenames in os.walk("/mnt/data/telescope-github-upload"):
+        for filename in filenames:
+            file_path = os.path.join(foldername, filename)
+            arcname = os.path.relpath(file_path, "/mnt/data/telescope-github-upload")
+            zipf.write(file_path, arcname)
+
+zip_path
